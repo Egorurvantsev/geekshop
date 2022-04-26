@@ -4,7 +4,7 @@ import random
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserChangeForm, UserCreationForm
 
-from .models import ShopUser
+from .models import ShopUser, ShopUserProfile
 
 
 class ShopUserLoginForm(AuthenticationForm):
@@ -25,11 +25,11 @@ class ShopUserRegisterForm(UserCreationForm):
             field.widget.attrs["class"] = "form-control"
             field.help_text = ""
 
-    # def clean_age(self):
-    #     data = self.cleaned_data["age"]
-    #     if data < 18:
-    #         raise forms.ValidationError("Вы слишком молоды!")
-    #     return data
+    def clean_age(self):
+        data = self.cleaned_data["age"]
+        if data < 18:
+            raise forms.ValidationError("Вы слишком молоды!")
+        return data
 
     def save(self):
         user = super(ShopUserRegisterForm, self).save()
@@ -43,7 +43,7 @@ class ShopUserRegisterForm(UserCreationForm):
 
     class Meta:
         model = ShopUser
-        fields = ("username", "first_name", "password1", "password2", "email", "avatar")  # "age",
+        fields = ("username", "first_name", "password1", "password2", "email", "age", "avatar")
 
 
 class ShopUserEditForm(UserChangeForm):
@@ -53,13 +53,24 @@ class ShopUserEditForm(UserChangeForm):
             field.widget.attrs["class"] = "form-control"
             field.help_text = ""
 
-    # def clean_age(self):
-    #     data = self.cleaned_data["age"]
-    #     if data < 18:
-    #         raise forms.ValidationError("Вы слишком молоды!")
-    #
-    #     return data
+    def clean_age(self):
+        data = self.cleaned_data["age"]
+        if data < 18:
+            raise forms.ValidationError("Вы слишком молоды!")
+
+        return data
 
     class Meta:
         model = ShopUser
-        fields = ("username", "first_name", "email", "avatar")  # "age",
+        fields = ("username", "first_name", "email", "age", "avatar")
+
+
+class ShopUserProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = ShopUserProfile
+        fields = ("tagline", "aboutMe", "gender")
+
+    def __init__(self, *args, **kwargs):
+        super(ShopUserProfileEditForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs["class"] = "form-control"
