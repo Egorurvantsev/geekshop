@@ -22,4 +22,4 @@ class OrderItemForm(forms.ModelForm):
 
     class Meta:
         model = OrderItem
-        exclude = () #fields = "__all__"
+        exclude = ()  # fields = "__all__"
